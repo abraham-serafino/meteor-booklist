@@ -47,4 +47,4 @@ and `ValidatedMethod` in your own Meteor apps.
 ## Author
 
 My name is Abraham Serafino, and although you may not have guessed, I am crazy about MeteorJS. All my contact info
-is available at the bottom of my website - [www.AbrahamSerafino.com](http://www.AbrahamSerafino.com/).
+is available at the bottom of my website - [www.AbrahamSerafino.com](http://www.AbrahamSerafino.com/)
