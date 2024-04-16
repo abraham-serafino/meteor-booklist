@@ -1,9 +1,8 @@
 import React from "react"
 import { Button, SimpleGrid, TextInput } from "@mantine/core"
 import { useForm } from "@mantine/form"
-import Joi from "joi"
 import { validateWithJoi } from "/imports/Common/ValidatedMethod"
-import BooksApi from "./Books.api"
+import BooksApi, { createBookSchema } from "./Books.api"
 
 function BookForm() {
   const form = useForm({
@@ -11,14 +10,10 @@ function BookForm() {
     initialValues: { title: "", author: "" },
 
     validate(values) {
-      return validateWithJoi(
-        values,
-        Joi.object({
-          author: Joi.string().required(),
-          title: Joi.string().required()
-        }),
-        false
-      )
+      // When the third argument to validateWithJoi() is "false,"
+      // it returns an object that can be used by @mantine/form's
+      // validators instead of throwing an exception.
+      return validateWithJoi(values, createBookSchema, false)
     }
   })
 

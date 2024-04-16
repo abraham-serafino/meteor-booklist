@@ -12,6 +12,8 @@ const HomeRoutes = [
   }
 ]
 
+// Roll up child routes so that relevant data loaders can be called on
+// the server.
 const AllRoutes = [...HomeRoutes]
 
 function HomePage({ data }) {
@@ -25,7 +27,12 @@ function HomePage({ data }) {
         </Link>
       </p>
 
-      <div>{routesFrom(HomeRoutes, data)}</div>
+      <div>
+        {
+          // This method generates client-side routes.
+          routesFrom(HomeRoutes, data)
+        }
+      </div>
     </Container>
   )
 }

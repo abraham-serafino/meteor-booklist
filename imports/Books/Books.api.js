@@ -6,25 +6,30 @@ import {
 } from "/imports/Common/ValidatedMethod"
 import Joi from "joi"
 
+// These can only be imported on the server.
+let WebApp = {}
+let BooksModel = {}
+let connectRoute = {}
+let publishWithPolling = {}
+
 const BOOKS = {
   FIND_ALL: "books.findAll",
   CREATE: "book.create"
 }
 
 const Books = new Mongo.Collection(BOOKS.FIND_ALL)
-let BooksModel = {}
-let publication = {}
 
 if (Meteor.isServer) {
-  const { WebApp } = require("meteor/webapp")
-  const connectRoute = require("connect-route")
+  // Server-only imports.
+  WebApp = require("meteor/webapp").WebApp
+  connectRoute = require("connect-route")
   BooksModel = require("/imports/Books/Books.model").default
 
-  const publishWithPolling =
+  publishWithPolling =
     require("/imports/Common/publishWithPolling").default
 
-  //
-  ;(async () => {
+  Meteor.startup(async () => {
+    // Create some sample data when the server starts.
     const result = await BooksModel.findAll()
 
     if (!result?.length) {
@@ -43,23 +48,24 @@ if (Meteor.isServer) {
         title: "How to Win Friends and Influence People"
       })
     }
-  })()
+  })
 
+  // Initialize book-related REST endpoints.
   WebApp.connectHandlers.use(
     "/api",
     connectRoute((router) => {
       router.get("/books", async (request, response) => {
-        return response
-          .writeHead(200)
-          .end(JSON.stringify(await BooksModel.findAll()))
+        const books = await BooksModel.findAll()
+        return response.writeHead(200).end(JSON.stringify(books))
       })
 
       router.delete("/book/:_id", async (request, response) => {
+        // Throw a Meteor exception if request.params doesn't
+        // match deleteBookSchema.
         validateWithJoi(request.params, deleteBookSchema)
 
         try {
           await BooksModel.deleteBook(request.params)
-
           return response.writeHead(200).end()
         } catch (e) {
           return response.writeHead(500).end(JSON.stringify(e))
@@ -68,8 +74,10 @@ if (Meteor.isServer) {
     })
   )
 
+  // This convenience method can create a Meteor publication
+  // that polls any data source.
   publishWithPolling({
-    collectionName: BOOKS.FIND_ALL,
+    publicationName: BOOKS.FIND_ALL,
     getData: () => BooksModel.findAll(),
     useNumericKeys: true
   })
@@ -86,24 +94,38 @@ const createBookSchema = Joi.object({
 
 async function createBookMethod({ author, title }) {
   if (Meteor.isServer) {
-    const newBook = await BooksModel.createBook({ author, title })
-    publication.added(BOOKS.FIND_ALL, newBook._id, newBook)
+    // On the server side, we will insert the book into the database.
+    await BooksModel.createBook({ author, title })
   } else {
+    // On the client side, we will optimistically insert the new
+    // record into our collection until it is replaced with
+    // subscription data.
     Books.insert({ author, title })
   }
 }
 
 const BooksApi = {
   subscribe() {
+    // useMeteorSubscription() synchronizes client-side collections
+    // with server-side publications.
     return useMeteorSubscription({
+      // This is the client-side collection.
       Collection: Books,
+      // This is the name of the server-side publication.
       subscriptionName: BOOKS.FIND_ALL
     })
   },
 
+  // This convenience method creates a new, isomorphic Meteor method,
+  // and a client-side function that can call it - like this:
+  //
+  //    BooksApi.createBook({ author, title })
+  //
   createBook: ValidatedMethod(
     BOOKS.CREATE,
     createBookMethod,
+    // Arguments passed to the new function will be validated using
+    // this schema.
     createBookSchema
   )
 }

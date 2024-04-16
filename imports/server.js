@@ -12,6 +12,9 @@ WebApp.connectHandlers.use(bodyParser.json())
 onPageLoad(async (sink) => {
   let data = null
 
+  // Call the data loaders from all the exported routes that match
+  // the current URL path. Then aggregate the results into a giant
+  // "data" object.
   for (const { path, loader } of AllRoutes) {
     if (
       new UrlPattern(path).match(sink?.request?.path) &&
@@ -30,6 +33,8 @@ onPageLoad(async (sink) => {
     "app",
     ReactDOMServer.renderToString(
       <StaticRouter location={sink.request.url}>
+        {/* Server-side: pass the aggregated route loader data
+        into the component tree as props. */}
         <App data={data} />
       </StaticRouter>
     )
@@ -37,6 +42,8 @@ onPageLoad(async (sink) => {
 
   sink.appendToBody(`
     <script>
+        // Client-side: attach the stringified loader data to the window
+        // so that it can be retrieved by hydration logic 
         window.__PRELOADED_STATE__ = ${JSON.stringify(data).replace(/</g, "\\u003c")}
     </script>
   `)

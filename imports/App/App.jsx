@@ -12,11 +12,19 @@ const AppRoutes = [
   }
 ]
 
+// Roll up child routes so that data loaders can be called on the
+// server.
 const AllRoutes = [...AppRoutes, ...AllHomeRoutes]
 
 function App({ data }) {
   return (
-    <MantineProvider>{routesFrom(AppRoutes, data)}</MantineProvider>
+    <MantineProvider>
+      {
+        // This convenience method generates isomorphic routes
+        // for React Router.
+        routesFrom(AppRoutes, data)
+      }
+    </MantineProvider>
   )
 }
 

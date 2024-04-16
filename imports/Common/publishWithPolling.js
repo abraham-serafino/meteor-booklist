@@ -4,12 +4,12 @@ import { Meteor } from "meteor/meteor"
  * @notes this method has linear runtime, which may not be suitable for large datasets
  */
 function publishWithPolling({
-  collectionName,
+  publicationName,
   getData,
   pollInterval = 3000,
   useNumericKeys = false
 }) {
-  Meteor.publish(collectionName, async function (payload) {
+  Meteor.publish(publicationName, async function (payload) {
     const publishedKeys = {}
 
     const poll = async () => {
@@ -20,10 +20,10 @@ function publishWithPolling({
         docKeys[doc._id] = true
 
         if (publishedKeys[doc._id]) {
-          this.changed(collectionName, doc._id, doc)
+          this.changed(publicationName, doc._id, doc)
         } else {
           publishedKeys[doc._id] = true
-          this.added(collectionName, doc._id, doc)
+          this.added(publicationName, doc._id, doc)
         }
       }
 
@@ -31,15 +31,13 @@ function publishWithPolling({
         if (!docKeys[key]) {
           const k = useNumericKeys ? Number.parseInt(key) : key
           delete publishedKeys[key]
-          this.removed(collectionName, k)
+          this.removed(publicationName, k)
         }
       }
-
-      this.ready()
     }
 
     await poll()
-    // this.ready()
+    this.ready()
 
     const interval = Meteor.setInterval(poll, pollInterval)
 
