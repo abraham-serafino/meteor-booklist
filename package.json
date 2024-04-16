@@ -1,0 +1,39 @@
+{
+  "name": "meteor-booklist",
+  "private": false,
+  "scripts": {
+    "dev": "meteor run",
+    "start": "docker-compose up"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.23.5",
+    "@mantine/core": "^7.8.0",
+    "@mantine/form": "^7.8.0",
+    "@mantine/hooks": "^7.8.0",
+    "body-parser": "^1.20.2",
+    "connect-route": "^0.1.5",
+    "joi": "^17.12.3",
+    "meteor-node-stubs": "^1.2.9",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router": "^6.22.3",
+    "react-router-dom": "^6.22.3",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7",
+    "url-pattern": "^1.0.3"
+  },
+  "meteor": {
+    "mainModule": {
+      "client": "imports/client.js",
+      "server": "imports/server.js"
+    }
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "postcss-load-config": "^5.0.3",
+    "postcss-preset-mantine": "^1.14.4",
+    "postcss-simple-vars": "^7.0.1",
+    "prettier": "^3.2.5"
+  }
+}
