@@ -87,12 +87,15 @@ const BooksApi = {
     createBookSchema
   ),
 
-  async deleteBook(_id) {
+  async deleteBook(book) {
     // In case you'd rather call a RESTful endpoint than use Meteor methods,
     // here's how to do it.
     if (Meteor.isClient) {
       const axios = require("axios").default
-      await axios.delete(`/api/book/${_id}`)
+
+      await axios.delete(
+        `/api/book?title=${book.title}&author=${book.author}`
+      )
     }
   }
 }

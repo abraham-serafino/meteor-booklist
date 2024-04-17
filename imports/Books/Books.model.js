@@ -1,6 +1,6 @@
 import { validateWithJoi } from "/imports/Common/ValidatedMethod"
 import getDb from "/imports/Common/db"
-import { createBookSchema, deleteBookSchema } from "./Books.api"
+import { createBookSchema } from "./Books.api"
 
 async function findOne({ author, title }) {
   validateWithJoi({ author, title }, createBookSchema)
@@ -57,8 +57,15 @@ async function createBook({ author, title }) {
   return findOne({ author, title })
 }
 
-async function deleteBook({ _id }) {
-  validateWithJoi({ _id }, deleteBookSchema)
+async function deleteBook({ author, title }) {
+  validateWithJoi({ author, title }, createBookSchema)
+
+  const existing = await findOne({ author, title })
+
+  if (!existing) {
+    // Nothing to delete; "fail" silently.
+    return
+  }
 
   const db = await getDb()
 
@@ -67,7 +74,7 @@ async function deleteBook({ _id }) {
     DELETE FROM book
         WHERE _id = ?
   `,
-    _id
+    existing._id
   )
 }
 

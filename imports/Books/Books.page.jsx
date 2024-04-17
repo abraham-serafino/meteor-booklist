@@ -23,16 +23,22 @@ function BooksPage({ data }) {
     }
   }, [isLoading, (bookResults || []).length])
 
-  const handleAddBook = async (values) => {
+  const handleAddBook = async (newBook) => {
     // Optimistically insert the new record into our collection until
     // it is replaced with subscription data.
-    setBooks([...books, values])
-    BooksApi.createBook(values)
+    setBooks([...books, newBook])
+    BooksApi.createBook(newBook)
   }
 
-  const handleDelete = async (id) => {
-    setBooks(books.filter(({ _id }) => _id !== id))
-    await BooksApi.deleteBook(id)
+  const handleDelete = async (book) => {
+    setBooks(
+      books.filter(
+        ({ author, title }) =>
+          title !== book.title || author !== book.author
+      )
+    )
+
+    await BooksApi.deleteBook(book)
   }
 
   return (
@@ -41,11 +47,13 @@ function BooksPage({ data }) {
 
       <Space h="md" />
 
-      {books?.map(({ _id, title, author }) => {
+      {books?.map(({ title, author }) => {
         return (
           <div key={`${title} - ${author}`}>
             <i>"{title}"</i> - {author}{" "}
-            <Anchor onClick={() => handleDelete(_id)}>X</Anchor>
+            <Anchor onClick={() => handleDelete({ author, title })}>
+              X
+            </Anchor>
           </div>
         )
       })}
