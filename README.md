@@ -1,4 +1,4 @@
-# meteor-booklist
+# Meteor Booklist
 
 ## Getting started
 
