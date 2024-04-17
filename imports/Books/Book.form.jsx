@@ -2,9 +2,9 @@ import React from "react"
 import { Button, SimpleGrid, TextInput } from "@mantine/core"
 import { useForm } from "@mantine/form"
 import { validateWithJoi } from "/imports/Common/ValidatedMethod"
-import BooksApi, { createBookSchema } from "./Books.api"
+import { createBookSchema } from "./Books.api"
 
-function BookForm() {
+function BookForm({ addBook }) {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: { title: "", author: "" },
@@ -18,12 +18,13 @@ function BookForm() {
   })
 
   const handleSubmit = (values) => {
-    BooksApi.createBook(values)
+    form.reset()
+    addBook(values)
   }
 
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
-      <SimpleGrid cols={2}>
+      <SimpleGrid cols={{ xs: 1, sm: 2 }}>
         <TextInput
           label="Title"
           placeholder="Title"
