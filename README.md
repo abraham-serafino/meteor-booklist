@@ -26,10 +26,9 @@ This project shows how MeteorJS can be used with data sources other than MongoDB
 * `imports/Books/Books.api.js`
 
 It also demonstrates a simple way to do isomorphic routing with React Router and hand-rolled,
-server-side data loaders. See the exported `{...}Routes` objects in:
-* `imports/App/App.jsx`;
-* `imports/App/Home.page.jsx`; and,
-* The bookLoader in `Books/Books.page.jsx`
+server-side data loaders. See:
+* the exported `{...}Routes` objects in `imports/App/App.jsx` and `imports/App/Home.page.jsx`; and,
+* the bookLoader in `Books/Books.page.jsx`
 
 Then you can see how those route/loaders are used in:
 * `imports/server.js`; and,
@@ -48,4 +47,4 @@ and `ValidatedMethod` in your own Meteor apps.
 ## Author
 
 My name is Abraham Serafino, and although you may not have guessed, I am crazy about MeteorJS. All my contact info
-is available at the bottom of my website - [www.AbrahamSerafino.com](http://www.AbrahamSerafino.com/).
+is available at the bottom of my website - [www.AbrahamSerafino.com](http://www.AbrahamSerafino.com/)
